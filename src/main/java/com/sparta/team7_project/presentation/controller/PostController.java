@@ -72,7 +72,7 @@ public class PostController {
     //6.게시글 좋아요 추가와 취소
     @ResponseBody
     @PostMapping("/post/{id}/like")
-    public MessageResponseDto LikePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public MessageResponseDto likePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return postService.updateLikePost(id, userDetails.getUser());
     }
 
