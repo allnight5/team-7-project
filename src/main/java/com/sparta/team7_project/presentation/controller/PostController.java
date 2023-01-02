@@ -69,6 +69,7 @@ public class PostController {
 
         return postService.delete(id, userDetails.getUser());
     }
+    //6.게시글 좋아요 추가와 취소
     @ResponseBody
     @PostMapping("/post/{id}/like")
     public MessageResponseDto LikePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
