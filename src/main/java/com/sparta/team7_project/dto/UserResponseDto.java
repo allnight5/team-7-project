@@ -1,8 +1,7 @@
 package com.sparta.team7_project.dto;
 
-import com.sparta.team7_project.entity.User;
+import com.sparta.team7_project.Persistence.entity.User;
 import com.sparta.team7_project.enums.UserRoleEnum;
-import javax.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

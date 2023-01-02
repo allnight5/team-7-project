@@ -1,4 +1,4 @@
-package com.sparta.team7_project.entity;
+package com.sparta.team7_project.Persistence.entity;
 
 import javax.persistence.*;
 import lombok.Getter;

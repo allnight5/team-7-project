@@ -1,6 +1,6 @@
 package com.sparta.team7_project.Persistence.repository;
 
-import com.sparta.team7_project.entity.PostLike;
+import com.sparta.team7_project.Persistence.entity.PostLike;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

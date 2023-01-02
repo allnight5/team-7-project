@@ -1,7 +1,7 @@
 package com.sparta.team7_project.dto;
 
 
-import com.sparta.team7_project.entity.Comment;
+import com.sparta.team7_project.Persistence.entity.Comment;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

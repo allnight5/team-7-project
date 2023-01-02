@@ -1,9 +1,9 @@
 package com.sparta.team7_project.business.service;
 
 import com.sparta.team7_project.dto.*;
-import com.sparta.team7_project.entity.Comment;
-import com.sparta.team7_project.entity.Post;
-import com.sparta.team7_project.entity.User;
+import com.sparta.team7_project.Persistence.entity.Comment;
+import com.sparta.team7_project.Persistence.entity.Post;
+import com.sparta.team7_project.Persistence.entity.User;
 import com.sparta.team7_project.enums.UserRoleEnum;
 import com.sparta.team7_project.Persistence.repository.CommentRepository;
 import com.sparta.team7_project.Persistence.repository.PostRepository;

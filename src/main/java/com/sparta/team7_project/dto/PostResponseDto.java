@@ -1,6 +1,6 @@
 package com.sparta.team7_project.dto;
 
-import com.sparta.team7_project.entity.Post;
+import com.sparta.team7_project.Persistence.entity.Post;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

@@ -1,4 +1,4 @@
-package com.sparta.team7_project.entity;
+package com.sparta.team7_project.Persistence.entity;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;

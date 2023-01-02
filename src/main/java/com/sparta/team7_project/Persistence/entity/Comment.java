@@ -1,4 +1,4 @@
-package com.sparta.team7_project.entity;
+package com.sparta.team7_project.Persistence.entity;
 
 import com.sparta.team7_project.dto.CommentRequestDto;
 import javax.persistence.*;
