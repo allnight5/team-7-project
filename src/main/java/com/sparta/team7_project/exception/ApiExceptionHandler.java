@@ -9,20 +9,21 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-//@Slf4j
-//@RestControllerAdvice
+@Slf4j
+@RestControllerAdvice
 public class ApiExceptionHandler {
 //    @ExceptionHandler(value = { IllegalArgumentException.class })
+    @ExceptionHandler(IllegalArgumentException.class)
 //    @ExceptionHandler({IllegalArgumentException.class, TokenMgrError.class})
-    //2개이상의 예외를 처리하고 싶을때
-//    @ExceptionHandler(IllegalArgumentException.class)
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    public ResponseEntity<Object> handleApiRequestException(IllegalArgumentException ex) {
-//        ApiExceptionDto restApiException = new ApiExceptionDto(ex.getMessage(), HttpStatus.BAD_REQUEST);
-//        log.warn(ex.getMessage());
-//        return new ResponseEntity<>(
-//                restApiException,
-//                HttpStatus.BAD_REQUEST
-//        );
-//    }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleApiRequestException(IllegalArgumentException ex) {
+        ApiExceptionDto restApiException = new ApiExceptionDto();
+        restApiException.setHttpStatus(HttpStatus.BAD_REQUEST);
+        restApiException.setErrorMessage(ex.getMessage());
+        log.warn(ex.getMessage());
+        return new ResponseEntity<>(
+                restApiException,
+                HttpStatus.BAD_REQUEST
+        );
+    }
 }

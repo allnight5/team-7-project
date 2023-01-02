@@ -34,6 +34,7 @@ public class PostController {
             인증 한 경우에는 username과 authorities 참조 가능
          */
         return postService.createPost(requestDto, userDetails.getUser());
+//        return postService.createPost(requestDto, userDetails.getUser());
     }
 
     // 2. 게시글 전체 목록 조회 API
@@ -55,6 +56,18 @@ public class PostController {
     @ResponseBody
     @PutMapping("/post/{id}")
     public MessageResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        String token = jwtUtil.resolveToken(request);
+//        Claims claims;
+//        if (token != null) {
+//            if (jwtUtil.validateToken(token)) {
+//                claims = jwtUtil.getUserInfoFromToken(token);
+//            } else {
+//                return new MessageResponseDto("토큰이 존재하지 않습니다..", 400);
+//            }
+//        }else {
+//            return new MessageResponseDto("토큰이 존재하지 않습니다..", 400);
+//        }
+//        String username = claims.getSubject();
         return postService.update(id, requestDto, userDetails.getUser());
     }
 
@@ -63,6 +76,7 @@ public class PostController {
     @DeleteMapping("/post/{id}")
     public MessageResponseDto deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 //        String token = jwtUtil.resolveToken(request);
+//
 //        Claims claims;
 //        if (token != null) {
 //            if (jwtUtil.validateToken(token)) {
