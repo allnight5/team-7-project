@@ -28,7 +28,7 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-//    @Column(nullable = false, unique = true)
+    //    @Column(nullable = false, unique = true)
 //    private String email;
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -39,7 +39,7 @@ public class User {
     @OneToMany(mappedBy = "users" , cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> commentList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "users" , cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "username" , cascade = CascadeType.REMOVE)
     private List<PostLike> postLike = new ArrayList<>();
 
     @OneToMany(mappedBy = "users" , cascade = CascadeType.REMOVE)

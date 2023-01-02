@@ -1,5 +1,7 @@
 package com.sparta.team7_project.presentation.controller;
 
+import com.sparta.team7_project.business.dto.PostRequestDto;
+import com.sparta.team7_project.business.dto.PostResponseDto;
 import com.sparta.team7_project.dto.*;
 import com.sparta.team7_project.security.jwt.JwtUtil;
 import com.sparta.team7_project.presentation.dto.MessageResponseDto;

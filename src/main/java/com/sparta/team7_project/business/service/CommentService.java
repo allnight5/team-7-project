@@ -1,6 +1,8 @@
 package com.sparta.team7_project.business.service;
 
 
+import com.sparta.team7_project.business.dto.CommentRequestDto;
+import com.sparta.team7_project.business.dto.CommentResponseDto;
 import com.sparta.team7_project.dto.*;
 import com.sparta.team7_project.Persistence.entity.Comment;
 import com.sparta.team7_project.Persistence.entity.Post;
