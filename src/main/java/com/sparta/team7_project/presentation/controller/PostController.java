@@ -58,38 +58,22 @@ public class PostController {
     @ResponseBody
     @PutMapping("/post/{id}")
     public MessageResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        String token = jwtUtil.resolveToken(request);
-//        Claims claims;
-//        if (token != null) {
-//            if (jwtUtil.validateToken(token)) {
-//                claims = jwtUtil.getUserInfoFromToken(token);
-//            } else {
-//                return new MessageResponseDto("토큰이 존재하지 않습니다..", 400);
-//            }
-//        }else {
-//            return new MessageResponseDto("토큰이 존재하지 않습니다..", 400);
-//        }
-//        String username = claims.getSubject();
+
         return postService.update(id, requestDto, userDetails.getUser());
     }
 
-    //선택한 게시글 삭제 API
+    //5. 선택한 게시글 삭제 API
     @ResponseBody
     @DeleteMapping("/post/{id}")
     public MessageResponseDto deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        String token = jwtUtil.resolveToken(request);
-//
-//        Claims claims;
-//        if (token != null) {
-//            if (jwtUtil.validateToken(token)) {
-//                claims = jwtUtil.getUserInfoFromToken(token);
-//            } else {
-//                return new MessageResponseDto("토큰이 존재하지 않습니다..", 400);
-//            }
-//        }else {
-//            return new MessageResponseDto("토큰이 존재하지 않습니다..", 400);
-//        }
-//        String username = claims.getSubject();
+
         return postService.delete(id, userDetails.getUser());
     }
+    @ResponseBody
+    @PostMapping("/post/{id}/like")
+    public MessageResponseDto LikePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return postService.updateLikePost(id, userDetails.getUser());
+    }
+
+    //
 }

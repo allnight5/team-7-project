@@ -124,7 +124,7 @@ public class PostService {
         return new MessageResponseDto("삭제 실패", HttpStatus.FAILED_DEPENDENCY.value());
     }
 
-
+    //게시글 좋아요 추가
     @Transactional
     public MessageResponseDto updateLikePost(Long id, User user){
         Post post = postRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("존재하지 않는 게시글입니다."));
