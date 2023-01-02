@@ -39,7 +39,7 @@ public class User {
     @OneToMany(mappedBy = "users" , cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> commentList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "users" , cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "username" , cascade = CascadeType.REMOVE)
     private List<PostLike> postLike = new ArrayList<>();
 
     @OneToMany(mappedBy = "users" , cascade = CascadeType.REMOVE)

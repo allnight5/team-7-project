@@ -49,7 +49,7 @@ public class Post extends Timestamped{
     @OneToMany(mappedBy = "posts", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private final List<Comment> commentList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "posts", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "postId", cascade = CascadeType.REMOVE)
     private final List<PostLike> postLikeList = new ArrayList<>();
 
     //게시글 참조하는 User관계 설정
