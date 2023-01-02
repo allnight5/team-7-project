@@ -1,6 +1,5 @@
-package com.sparta.team7_project.entity;
-
-import com.sparta.team7_project.dto.PostRequestDto;
+package com.sparta.team7_project.Persistence.entity;
+import com.sparta.team7_project.business.dto.PostRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,7 +30,8 @@ public class Post extends Timestamped{
     @Column(nullable = false)
     private String content;
 
-    private Long likeCount;
+    @Column(nullable = true)
+    private int likeCount;
     // @JsonIgnore 필드 레벨에서 무시 될 수 있는 속성
     // 데이터를 주고 받을 때 해당 데이터는 결과창에서 응답값에 보이지 않는다.
 //    @JsonIgnore
@@ -48,7 +48,7 @@ public class Post extends Timestamped{
     @OneToMany(mappedBy = "posts", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private final List<Comment> commentList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "posts", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "postId", cascade = CascadeType.REMOVE)
     private final List<PostLike> postLikeList = new ArrayList<>();
 
     //게시글 참조하는 User관계 설정
@@ -76,6 +76,7 @@ public class Post extends Timestamped{
         this.content = requestDto.getContent();
         this.username = username;
         this.users = user;
+        this.likeCount = 0;
     }
     public void update(PostRequestDto requestDto) {
         this.title = requestDto.getTitle();
@@ -94,4 +95,11 @@ public class Post extends Timestamped{
         }
         return false;
     }
+    public void increaseLikeCount(){
+        this.likeCount += 1;
+    }
+    public void decreaseLikeCount(){
+        this.likeCount -= 1;
+    }
+
 }

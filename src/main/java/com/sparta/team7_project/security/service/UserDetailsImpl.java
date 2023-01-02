@@ -1,6 +1,6 @@
 package com.sparta.team7_project.security.service;
 
-import com.sparta.team7_project.entity.User;
+import com.sparta.team7_project.Persistence.entity.User;
 import com.sparta.team7_project.enums.UserRoleEnum;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

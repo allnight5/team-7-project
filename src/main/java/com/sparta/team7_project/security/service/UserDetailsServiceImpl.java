@@ -1,6 +1,6 @@
 package com.sparta.team7_project.security.service;
 
-import com.sparta.team7_project.entity.User;
+import com.sparta.team7_project.Persistence.entity.User;
 import com.sparta.team7_project.Persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

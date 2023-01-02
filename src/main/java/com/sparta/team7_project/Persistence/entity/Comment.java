@@ -1,6 +1,6 @@
-package com.sparta.team7_project.entity;
+package com.sparta.team7_project.Persistence.entity;
 
-import com.sparta.team7_project.dto.CommentRequestDto;
+import com.sparta.team7_project.business.dto.CommentRequestDto;
 import javax.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

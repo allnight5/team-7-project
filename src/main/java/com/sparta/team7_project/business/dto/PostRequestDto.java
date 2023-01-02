@@ -1,4 +1,4 @@
-package com.sparta.team7_project.dto;
+package com.sparta.team7_project.business.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

@@ -1,6 +1,8 @@
 package com.sparta.team7_project.presentation.controller;
 
 
+import com.sparta.team7_project.business.dto.CommentRequestDto;
+import com.sparta.team7_project.business.dto.CommentResponseDto;
 import com.sparta.team7_project.dto.*;
 import com.sparta.team7_project.presentation.dto.MessageResponseDto;
 import com.sparta.team7_project.security.service.UserDetailsImpl;
