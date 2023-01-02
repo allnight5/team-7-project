@@ -24,8 +24,6 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
-    private final static String SUCCESS_LIKE_POST = "게시글 좋아요";
-    private final static String SUCCESS_UNLIKE_POST = "게시글 좋아요 취소";
     private final PostLikeRepository postLikeRepository;
 
 //    private final UserRepository userRepository;
@@ -194,7 +192,7 @@ public class PostService {
     //인증처럼 Controller부분에서 확인해서 게시글을 보내줘야한다.
 
     @Transactional
-    public String updateLikePost(Long id, User user){
+    public MessageResponseDto updateLikePost(Long id, User user){
         Post post = postRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("존재하지 않는 게시글입니다."));
         if(!hasLikePost(post, user)) {
             post.increaseLikeCount();
@@ -204,17 +202,17 @@ public class PostService {
         return removeLikePost(post, user);
     }
 
-    public String createLikePost(Post post, User user){
+    public MessageResponseDto createLikePost(Post post, User user){
         PostLike postlike = new PostLike(post, user);
         postLikeRepository.save(postlike);
-        return SUCCESS_LIKE_POST;
+        return new MessageResponseDto("게시글 좋아요 성공", HttpStatus.OK.value());
     }
-    public String removeLikePost(Post post, User user){
+    public MessageResponseDto removeLikePost(Post post, User user){
         PostLike postLike = postLikeRepository.findByPostIdAndUsername(post, user).orElseThrow(() -> {
             throw new IllegalArgumentException("좋아요가 없습니다.");
         });
         postLikeRepository.delete(postLike);
-        return SUCCESS_UNLIKE_POST;
+        return new MessageResponseDto("게시글 좋아요 취소 성공", HttpStatus.OK.value());
     }
     public boolean hasLikePost(Post post, User user){
         return postLikeRepository.findByPostIdAndUsername(post, user).isPresent();

@@ -93,7 +93,7 @@ public class PostController {
     }
     @ResponseBody
     @PostMapping("/post/{id}/like")
-    public String likePost (@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public MessageResponseDto likePost (@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return postService.updateLikePost(id, userDetails.getUser());
     }
 }
