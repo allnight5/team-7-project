@@ -29,13 +29,6 @@ public class UserController {
         return msg;
 
     }
-//    @ResponseBody
-//    @PostMapping("/login")
-//    public MsgResponseDto login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
-//        userService.login(loginRequestDto, response);
-//
-//        return new MsgResponseDto("로그인 성공", HttpStatus.OK.value());
-//    }
     //2.로그인
     @PostMapping("/login")
     public MessageResponseDto login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
@@ -58,7 +51,7 @@ public class UserController {
     }
 
     @GetMapping("/forbidden")
-    public ResponseEntity<SecurityExceptionDto> forbidden(){
-        return ResponseEntity.ok(new SecurityExceptionDto(400,"권한이 없습니다."));
+    public MessageResponseDto forbidden(){
+        return new MessageResponseDto("권한이 없습니다.", 400);
     }
 }

@@ -1,8 +1,9 @@
 package com.sparta.team7_project.business.service;
-
+import com.sparta.team7_project.Persistence.repository.PostLikeRepository;
 import com.sparta.team7_project.dto.*;
 import com.sparta.team7_project.Persistence.entity.Comment;
 import com.sparta.team7_project.Persistence.entity.Post;
+import com.sparta.team7_project.Persistence.entity.PostLike;
 import com.sparta.team7_project.Persistence.entity.User;
 import com.sparta.team7_project.enums.UserRoleEnum;
 import com.sparta.team7_project.Persistence.repository.CommentRepository;
@@ -22,9 +23,7 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
-
-//    private final UserRepository userRepository;
-//    private final JwtUtil jwtUtil;
+    private final PostLikeService postLikeService;
 
     //1.게시글 생성
     @Transactional
@@ -101,9 +100,6 @@ public class PostService {
     @Transactional
     public ResponseDto<PostResponseDto> getPost(Long id) {
 
-        Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("게시글이 삭제되었습니다.")
-        );
 //        Optional<Post> post = postRepository.findById(id);
         //OPtional로 null은 받지않지만
         //비어있을수는 있음 그러니 empty검사를해서 비어있다면 게시글이 없다는
@@ -111,6 +107,9 @@ public class PostService {
 //        if(post.isEmpty()){
 //            return new ResponseDto<>("해당 게시글이 없습니다..", 400);
 //        }
+        Post post = postRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("게시글이 삭제되었습니다.")
+        );
         //이게 JPA로 양방향 연결이 post로 되어있어서
         //이 포스트와 연결된 댓글(comment)만 comments라는 리스트 멤버변수에 넣어줌
         List<Comment> comments = commentRepository.findAllByPosts(post);
@@ -132,22 +131,9 @@ public class PostService {
     //4.선택한 게시글 수정
     @Transactional
     public MessageResponseDto update(Long id, PostRequestDto requestDto, User user){
-//        Optional<User> user = userRepository.findByUsername(username);
-//        if(user.isEmpty()) {
-//            return new MessageResponseDto("해당 게시글에 수정 대한 권한이 없습니다.", 400);
-//        }
-        //전역처리를할시
-//        Post post = postRepository.findById(id).orElseThrow(
-//                ()-> new IllegalArgumentException("존재하지 않는 게시글입니다.")
-//        );
         Post post = postRepository.findById(id).orElseThrow(
                 ()-> new IllegalArgumentException("이미 삭제된 게시글입니다.")
         );
-//        Optional<Post> post = postRepository.findById(id);
-//        if(post.isEmpty()) {
-////                return new MessageResponseDto("존재하지 않는 게시글입니다.", HttpStatus.FAILED_DEPENDENCY.value());
-//            return new MessageResponseDto("존재하지 않는 게시글입니다.", 400);
-//        }
         //앞에는 지금 로그인한 유저가 게시글 작성한 유저와 같은지 검사함
         //뒤에는 지금이 로그인한사람이 유저인지 관리자인지 검사함
         if(user.getUsername().equals(post.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
@@ -162,17 +148,9 @@ public class PostService {
     //5.선택한 게시글 삭제
     @Transactional
     public MessageResponseDto delete(Long id, User user) {
-//        Optional<User> user = userRepository.findByUsername(username);
-//        if (user.isEmpty()) {
-//            return new MessageResponseDto("해당 게시글에 대한 권한이 없습니다.", 400);
-//        }
         Post post = postRepository.findById(id).orElseThrow(
                 ()-> new IllegalArgumentException("이미 삭제된 게시글입니다.")
         );
-//        Optional<Post> post = postRepository.findById(id);
-//        if (post.isEmpty()) {
-//            return new MessageResponseDto("존재하지 않는 게시글입니다.", HttpStatus.FAILED_DEPENDENCY.value());
-//        }
         //앞에는 지금 로그인한 유저가 게시글 작성한 유저와 같은지 검사함
         //뒤에는 지금이 로그인한사람이 유저인지 관리자인지 검사함
         if (user.getUsername().equals(post.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
@@ -180,12 +158,21 @@ public class PostService {
             postRepository.delete(post);
             return new MessageResponseDto("삭제 성공", HttpStatus.OK.value());
         }
-//            return new MsgResponseDto("삭제 성공", HttpStatus.OK.value());
         return new MessageResponseDto("삭제 실패", HttpStatus.FAILED_DEPENDENCY.value());
     }
 
     //선택한 게시글(post)이 존재하는지 확인하는 메소드를..
     //만들어봤는데 어쨋든 post가 필요하니까..
     //인증처럼 Controller부분에서 확인해서 게시글을 보내줘야한다.
+    @Transactional
+    public MessageResponseDto updateLikePost(Long id, User user){
+        Post post = postRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+        if(!postLikeService.hasLikePost(post, user)) {
+            post.increaseLikeCount();
+            return postLikeService.createLikePost(post, user);
+        }
+        post.decreaseLikeCount();
+        return postLikeService.removeLikePost(post, user);
+    }
 
 }

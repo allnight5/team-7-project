@@ -11,22 +11,31 @@ import lombok.NoArgsConstructor;
 public class PostLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "POSTLIKE_ID")
     private Long id;
 
 //    @Column
 //    private Long Like_count;
 
-    @Column
-    private String username;
-    @Column
-    private Long postId;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Post posts;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User users;
+    @JoinColumn(name="USER_ID", nullable = false)
+    private User username;
+
+    @JoinColumn(name="POST_ID", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Post postId;
+    //    @ManyToOne(fetch = FetchType.LAZY)
+//    private Post posts;
+    @Column(nullable = false)
+    private boolean status;
+
+
+    //    @ManyToOne(fetch = FetchType.LAZY)
+//    private User users;
     public PostLike(Post post, User user){
-        this.posts = post;
-        this.users = user;
+        this.postId = post;
+        this.username = user;
+        this.status = true;
     }
 }
