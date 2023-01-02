@@ -1,5 +1,6 @@
 package com.sparta.team7_project.presentation.controller;
 
+//import com.sparta.team7_project.business.service.LikeService;
 import com.sparta.team7_project.dto.*;
 import com.sparta.team7_project.security.jwt.JwtUtil;
 import com.sparta.team7_project.presentation.dto.MessageResponseDto;
@@ -89,5 +90,10 @@ public class PostController {
 //        }
 //        String username = claims.getSubject();
         return postService.delete(id, userDetails.getUser());
+    }
+    @ResponseBody
+    @PostMapping("/post/{id}/like")
+    public String likePost (@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return postService.updateLikePost(id, userDetails.getUser());
     }
 }

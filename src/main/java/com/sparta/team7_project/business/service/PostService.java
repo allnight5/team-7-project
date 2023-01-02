@@ -1,8 +1,10 @@
 package com.sparta.team7_project.business.service;
 
+import com.sparta.team7_project.Persistence.repository.PostLikeRepository;
 import com.sparta.team7_project.dto.*;
 import com.sparta.team7_project.entity.Comment;
 import com.sparta.team7_project.entity.Post;
+import com.sparta.team7_project.entity.PostLike;
 import com.sparta.team7_project.entity.User;
 import com.sparta.team7_project.enums.UserRoleEnum;
 import com.sparta.team7_project.Persistence.repository.CommentRepository;
@@ -22,6 +24,9 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final static String SUCCESS_LIKE_POST = "게시글 좋아요";
+    private final static String SUCCESS_UNLIKE_POST = "게시글 좋아요 취소";
+    private final PostLikeRepository postLikeRepository;
 
 //    private final UserRepository userRepository;
 //    private final JwtUtil jwtUtil;
@@ -187,5 +192,32 @@ public class PostService {
     //선택한 게시글(post)이 존재하는지 확인하는 메소드를..
     //만들어봤는데 어쨋든 post가 필요하니까..
     //인증처럼 Controller부분에서 확인해서 게시글을 보내줘야한다.
+
+    @Transactional
+    public String updateLikePost(Long id, User user){
+        Post post = postRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+        if(!hasLikePost(post, user)) {
+            post.increaseLikeCount();
+            return createLikePost(post, user);
+        }
+        post.decreaseLikeCount();
+        return removeLikePost(post, user);
+    }
+
+    public String createLikePost(Post post, User user){
+        PostLike postlike = new PostLike(post, user);
+        postLikeRepository.save(postlike);
+        return SUCCESS_LIKE_POST;
+    }
+    public String removeLikePost(Post post, User user){
+        PostLike postLike = postLikeRepository.findByPostIdAndUsername(post, user).orElseThrow(() -> {
+            throw new IllegalArgumentException("좋아요가 없습니다.");
+        });
+        postLikeRepository.delete(postLike);
+        return SUCCESS_UNLIKE_POST;
+    }
+    public boolean hasLikePost(Post post, User user){
+        return postLikeRepository.findByPostIdAndUsername(post, user).isPresent();
+    }
 
 }
