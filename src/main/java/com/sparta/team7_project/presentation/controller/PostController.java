@@ -26,7 +26,7 @@ public class PostController {
     //1. 게시글 생성 API
     @ResponseBody
     @PostMapping("/post")
-    public Object createPost(@RequestBody PostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public PostResponseDto createPost(@RequestBody PostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         /*
             @AuthenticationPrincipal어노테이션이 하는역할
             스프링 시큐리티가 제공해주는 기능 중에 하나로 스프링 MVC 핸들러 파라메터에 @AuthenticationPrincipal를
@@ -42,7 +42,7 @@ public class PostController {
     // 2. 게시글 전체 목록 조회 API
     @ResponseBody
     @GetMapping("/post/get")
-    public Object getPostList() {
+    public List<PostResponseDto> getPostList() {
 
         return postService.getPosts();
     }
@@ -50,7 +50,7 @@ public class PostController {
     // 3. 선택한 게시글 조회 API
     @ResponseBody
     @GetMapping("/post/get/{id}")
-    public Object getPost(@PathVariable Long id) {
+    public PostResponseDto getPost(@PathVariable Long id) {
         return postService.getPost(id);
     }
 

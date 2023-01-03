@@ -31,7 +31,7 @@ public class ExceptionHandler {
         try{
             Object output = joinPoint.proceed();
             return output;
-        }catch (RuntimeException e) {
+        }catch (IllegalArgumentException e) {
             return new MessageResponseDto(e.getMessage(), 400);
         }
     }
@@ -41,7 +41,7 @@ public class ExceptionHandler {
         try{
             Object output = joinPoint.proceed();
             return output;
-        }catch (RuntimeException e) {
+        }catch (IllegalArgumentException e) {
             return new MessageResponseDto(e.getMessage(), 400);
         }
     }

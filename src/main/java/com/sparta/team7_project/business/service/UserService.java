@@ -36,11 +36,7 @@ public class UserService {
         Optional<User> found = userRepository.findByUsername(username);
         if (found.isPresent()) {
             return new MessageResponseDto("중복된 사용자가 존재합니다.", 400);
-        }        // 회원 중복 확인
-//        Optional<User> emailFound = userRepository.findByEmail(email);
-//        if (emailFound .isPresent()) {
-//            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
-//        }
+        }
 
         // 사용자 ROLE 확인
         UserRoleEnum role = UserRoleEnum.USER;
@@ -67,10 +63,6 @@ public class UserService {
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("사용자가 존재하지 않습니다. 회원가입 해주시기 바랍니다.")
         );
-//        Optional<User> user = userRepository.findByUsername(username);
-//        if(user.isEmpty()){
-//            return new MessageResponseDto("사용자가 존재하지 않습니다.", 400);
-//        }
         // 비밀번호 확인
         if(!passwordEncoder.matches(password, user.getPassword())){
             return new MessageResponseDto("비밀번호가 틀렸습니다.", 400);

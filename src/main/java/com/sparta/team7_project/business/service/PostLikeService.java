@@ -25,7 +25,7 @@ public class PostLikeService {
     //게시글 좋아요 삭제
     public MessageResponseDto removeLikePost(Post post, User user){
         PostLike postLike = postLikeRepository.findByPostIdAndUsername(post, user).orElseThrow(() -> {
-            throw new IllegalArgumentException("좋아요가 없습니다.");
+            throw new IllegalArgumentException("게시글이 없습니다..");
         });
         postLikeRepository.delete(postLike);
         return new MessageResponseDto("게시글 좋아요 취소 성공", HttpStatus.OK.value());
