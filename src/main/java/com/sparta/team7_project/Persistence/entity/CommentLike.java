@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class CommentLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "CommentLike_Id")
     private Long id;
 //
 //    @Column
@@ -25,6 +26,7 @@ public class CommentLike {
 /*    @ManyToOne(fetch = FetchType.LAZY)
     private Comment comments;*/
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="USER_ID") //조인컬럼찾을때 필드명_참조테이블컬럼명
     private User users;
 
     public CommentLike(User user , Long commentId, Long id) {
