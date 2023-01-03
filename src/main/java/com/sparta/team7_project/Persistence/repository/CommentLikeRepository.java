@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> {
-    Optional<CommentLike> deleteCommentLikeByUsernameAndCommentId  (String username,Long commentId);
+    Optional<CommentLike> deleteCommentLikeByUsernameAndCommentId(String username,Long commentId);
 // 내가 원하지 않는 댓글의 좋아요도 삭제됨...
+    Optional<CommentLike> deleteCommentLikeByPostId(Long postId);
     Optional<CommentLike> findAllByCommentIdAndUsername(Long commentId,String username);
 
     List<CommentLike> findAllByCommentId(Long commentId);

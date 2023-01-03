@@ -10,6 +10,7 @@ import com.sparta.team7_project.security.service.UserDetailsImpl;
 import com.sparta.team7_project.business.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController//CONTROLLER VS RESTCONTROLLER 두개의 차이점
@@ -39,8 +40,8 @@ public class CommentController {
     }
     //4.댓글 좋아요 카운트
     @PostMapping("/{id}/comment/{commentId}/like")
-    public MessageResponseDto likeComment(@AuthenticationPrincipal UserDetailsImpl userDetails,@PathVariable Long commentId){
-        return commentLikeService.updateAndCountCommentLike(userDetails.getUser(),commentId);
+    public MessageResponseDto likeComment(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long commentId, @PathVariable Long id){
+        return commentLikeService.updateAndCountCommentLike(userDetails.getUser(),commentId,id);
     }
 
   /* @GetMapping("/{id}/comment/{commentId}/like")

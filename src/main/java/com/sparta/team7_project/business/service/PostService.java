@@ -1,5 +1,6 @@
 package com.sparta.team7_project.business.service;
 
+import com.sparta.team7_project.Persistence.repository.CommentLikeRepository;
 import com.sparta.team7_project.business.dto.CommentResponseDto;
 import com.sparta.team7_project.business.dto.PostRequestDto;
 import com.sparta.team7_project.business.dto.PostResponseDto;
@@ -26,6 +27,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final PostLikeService postLikeService;
+
+    private final CommentLikeRepository commentLikeRepository;
 
     //1.게시글 생성
     @Transactional
@@ -119,6 +122,7 @@ public class PostService {
         if (user.getUsername().equals(post.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
             //DB에서 삭제처리를 해줌
             postRepository.delete(post);
+            commentLikeRepository.deleteCommentLikeByPostId(id);
             return new MessageResponseDto("삭제 성공", HttpStatus.OK.value());
         }
         return new MessageResponseDto("삭제 실패", HttpStatus.FAILED_DEPENDENCY.value());
