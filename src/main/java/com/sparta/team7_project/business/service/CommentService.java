@@ -1,6 +1,8 @@
 package com.sparta.team7_project.business.service;
 
 
+import com.sparta.team7_project.Persistence.entity.CommentLike;
+import com.sparta.team7_project.Persistence.repository.CommentLikeRepository;
 import com.sparta.team7_project.business.dto.CommentRequestDto;
 import com.sparta.team7_project.business.dto.CommentResponseDto;
 import com.sparta.team7_project.dto.*;
@@ -18,6 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -29,6 +33,7 @@ public class CommentService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final JwtUtil jwtUtil;
+
 
 
     //댓글 생성
@@ -60,6 +65,9 @@ public class CommentService {
         Comment comment = new Comment(requestDto, user.getUsername());
         comment.addUserAndPost(user, post);
         commentRepository.save(comment);
+
+
+
         return new ResponseDto<>(new CommentResponseDto(comment));
 //        }else {
 //            return new ResponseDto<>("존재하지 않는 토큰입니다.", 400);
@@ -143,4 +151,6 @@ public class CommentService {
         MessageResponseDto msg = new MessageResponseDto("삭제실패", HttpStatus.FAILED_DEPENDENCY.value());
         return msg;
     }
+
+
 }

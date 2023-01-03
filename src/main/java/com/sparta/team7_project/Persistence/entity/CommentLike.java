@@ -19,12 +19,15 @@ public class CommentLike {
     private String username;
     @Column
     private Long commentId;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Comment comments;
+
+/*    @ManyToOne(fetch = FetchType.LAZY)
+    private Comment comments;*/
     @ManyToOne(fetch = FetchType.LAZY)
     private User users;
-    public CommentLike(Comment comment, User user) {
-        this.comments = comment;
+
+    public CommentLike(User user , Long commentId) {
+        this.commentId= commentId;
         this.users = user;
+        this.username = user.getUsername();
     }
 }

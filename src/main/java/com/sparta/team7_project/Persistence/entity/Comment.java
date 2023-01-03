@@ -38,8 +38,8 @@ public class Comment extends Timestamped{
     @JoinColumn(name = "POST_ID")
     private Post posts;
 
-    @OneToMany(mappedBy = "comments", cascade =  CascadeType.REMOVE)
-    private final List<CommentLike> commentLikeList = new ArrayList<>();
+/*    @OneToMany(mappedBy = "comments", cascade =  CascadeType.REMOVE)
+    private final List<CommentLike> commentLikeList = new ArrayList<>();*/
 
     public Comment(CommentRequestDto requestDto, String username){
         this.comment = requestDto.getComment();
@@ -60,5 +60,8 @@ public class Comment extends Timestamped{
             return true;
         }
         return false;
+    }
+    public void LikeCount(Long likeCount){
+        this.likeCount = likeCount;
     }
 }
