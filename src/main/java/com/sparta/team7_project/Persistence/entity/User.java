@@ -12,12 +12,12 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity(name = "users")
+@Entity(name = "users유저")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="USER_ID")
+    @Column(name="USER_ID컬럼명")  //jpa는 똑똑하다  ..망상
     private Long id;
 
     // nullable: null 허용 여부
