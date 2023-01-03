@@ -3,6 +3,7 @@ package com.sparta.team7_project.presentation.controller;
 
 import com.sparta.team7_project.business.dto.CommentRequestDto;
 import com.sparta.team7_project.business.dto.CommentResponseDto;
+import com.sparta.team7_project.business.service.CommentLikeService;
 import com.sparta.team7_project.dto.*;
 import com.sparta.team7_project.presentation.dto.MessageResponseDto;
 import com.sparta.team7_project.security.service.UserDetailsImpl;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
+    private final CommentLikeService commentLikeService;
 
     //1. 댓글 생성 API
     @ResponseBody
@@ -35,4 +37,14 @@ public class CommentController {
     public MessageResponseDto deleteComment(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
         return commentService.deleteComment(userDetails.getUser(), id);
     }
+    @PostMapping("/{id}/comment/{commentId}/like")
+    public MessageResponseDto likeComment(@AuthenticationPrincipal UserDetailsImpl userDetails,@PathVariable Long commentId){
+        return commentLikeService.updateAndCountCommentLike(userDetails.getUser(),commentId);
+    }
+
+  /* @GetMapping("/{id}/comment/{commentId}/like")
+    public void seeLikeComment(@PathVariable Long commentId){
+        commentLikeService.LikeCount(commentId);
+    }
+*/
 }
