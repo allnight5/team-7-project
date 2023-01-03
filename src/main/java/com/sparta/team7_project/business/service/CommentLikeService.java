@@ -22,9 +22,9 @@ public class CommentLikeService {
     private final CommentRepository commentRepository;
 
     @Transactional//좋아요 판별하는 부분
-    public MessageResponseDto updateAndCountCommentLike(User user, Long commentId){
+    public MessageResponseDto updateAndCountCommentLike(User user, Long commentId, Long id){
         if(commentLikeRepository.findAllByCommentIdAndUsername(commentId ,user.getUsername()).isEmpty()){
-            CommentLike commentLike = new CommentLike(user,commentId);
+            CommentLike commentLike = new CommentLike(user,commentId, id);
             commentLikeRepository.save(commentLike);
 
             //... 위랑 아래는 별개의 기능..

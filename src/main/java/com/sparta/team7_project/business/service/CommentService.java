@@ -34,6 +34,8 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final JwtUtil jwtUtil;
 
+    private final CommentLikeRepository commentLikeRepository;
+
 
 
     //댓글 생성
@@ -145,6 +147,7 @@ public class CommentService {
         if (comment.isWriter(user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)){
             commentRepository.deleteById(comment.getId());
             MessageResponseDto msg = new MessageResponseDto("삭제 성공", HttpStatus.OK.value());
+            commentLikeRepository.deleteCommentLikeByUsernameAndCommentId(user.getUsername(), id);
             return msg;
         }
 
