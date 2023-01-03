@@ -22,7 +22,7 @@ public class CommentController {
     //1. 댓글 생성 API
     @ResponseBody
     @PostMapping("/{id}/comment")
-    public ResponseDto<CommentResponseDto> createComment(@RequestBody CommentRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
+    public Object createComment(@RequestBody CommentRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
         return commentService.createComment(requestDto, userDetails.getUser(), id);
     }
     //2.댓글 수정 API
@@ -37,6 +37,7 @@ public class CommentController {
     public MessageResponseDto deleteComment(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
         return commentService.deleteComment(userDetails.getUser(), id);
     }
+    //4.댓글 좋아요 카운트
     @PostMapping("/{id}/comment/{commentId}/like")
     public MessageResponseDto likeComment(@AuthenticationPrincipal UserDetailsImpl userDetails,@PathVariable Long commentId){
         return commentLikeService.updateAndCountCommentLike(userDetails.getUser(),commentId);

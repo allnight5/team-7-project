@@ -29,10 +29,10 @@ public class PostService {
 
     //1.게시글 생성
     @Transactional
-    public ResponseDto<PostResponseDto> createPost(PostRequestDto requestDto, User user) {
+    public PostResponseDto createPost(PostRequestDto requestDto, User user) {
         Post post = new Post(requestDto, user.getUsername(), user);
         postRepository.save(post);
-        return new ResponseDto<>(new PostResponseDto(post));
+        return new PostResponseDto(post);
     }
     @Transactional(readOnly = true)
     public List<PostResponseDto> getPosts() {
