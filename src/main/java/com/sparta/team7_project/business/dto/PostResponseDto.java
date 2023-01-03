@@ -16,8 +16,8 @@ public class PostResponseDto{
     private String username;
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
-    private List<CommentResponseDto> commentList;
     private int postlikeCount;
+    private List<CommentResponseDto> commentList;
     public PostResponseDto (Post post) {
         this.id = post.getId();
         this.createdDate = post.getCreatedDate();
@@ -34,8 +34,8 @@ public class PostResponseDto{
         this.title = post.getTitle();
         this.content = post.getContent();
         this.username = post.getUsername();
-        this.commentList = comment;
         this.postlikeCount = post.getLikeCount();
+        this.commentList = comment;
     }
 
     public void addCommentList(List<CommentResponseDto> commentList) {

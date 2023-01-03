@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ApiExceptionHandler {
 //    @ExceptionHandler(value = { IllegalArgumentException.class })
-    @ExceptionHandler(IllegalArgumentException.class)
 //    @ExceptionHandler({IllegalArgumentException.class, TokenMgrError.class})
+    @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Object> handleApiRequestException(IllegalArgumentException ex) {
         ApiExceptionDto restApiException = new ApiExceptionDto();

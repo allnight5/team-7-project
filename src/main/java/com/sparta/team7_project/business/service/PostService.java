@@ -32,10 +32,10 @@ public class PostService {
 
     //1.게시글 생성
     @Transactional
-    public ResponseDto<PostResponseDto> createPost(PostRequestDto requestDto, User user) {
+    public PostResponseDto createPost(PostRequestDto requestDto, User user) {
         Post post = new Post(requestDto, user.getUsername(), user);
         postRepository.save(post);
-        return new ResponseDto<>(new PostResponseDto(post));
+        return new PostResponseDto(post);
     }
     @Transactional(readOnly = true)
     public List<PostResponseDto> getPosts() {
@@ -71,7 +71,7 @@ public class PostService {
 
     //3.선택한 게시글 조회
     @Transactional
-    public ResponseDto<PostResponseDto> getPost(Long id) {
+    public PostResponseDto getPost(Long id) {
 
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 삭제되었습니다.")
@@ -92,7 +92,7 @@ public class PostService {
         //이제 Dto리스트에 연관된 댓글을 담은 댓글리스트를 넣어줌
         postResponseDto.addCommentList(commentResponseDto);
         //게시글을 되돌려서 보내줌
-        return new ResponseDto<>(postResponseDto);
+        return postResponseDto;
     }
     //4.선택한 게시글 수정
     @Transactional

@@ -27,11 +27,12 @@ public class Post extends Timestamped{
 //    @ManyToOne
     private String username;
 
+    @Column
+    private int likeCount;
+
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = true)
-    private int likeCount;
     // @JsonIgnore 필드 레벨에서 무시 될 수 있는 속성
     // 데이터를 주고 받을 때 해당 데이터는 결과창에서 응답값에 보이지 않는다.
 //    @JsonIgnore
