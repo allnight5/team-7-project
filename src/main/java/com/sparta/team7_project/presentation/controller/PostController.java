@@ -24,7 +24,6 @@ public class PostController {
     private final JwtUtil jwtUtil;
 
     //1. 게시글 생성 API
-    @ResponseBody
     @PostMapping("/post")
     public PostResponseDto createPost(@RequestBody PostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         /*
@@ -40,7 +39,6 @@ public class PostController {
     }
 
     // 2. 게시글 전체 목록 조회 API
-    @ResponseBody
     @GetMapping("/post/get")
     public List<PostResponseDto> getPostList() {
 
@@ -48,7 +46,6 @@ public class PostController {
     }
 
     // 3. 선택한 게시글 조회 API
-    @ResponseBody
     @GetMapping("/post/get/{id}")
     public PostResponseDto getPost(@PathVariable Long id) {
         return postService.getPost(id);
@@ -62,14 +59,12 @@ public class PostController {
     }
 
     //5. 선택한 게시글 삭제 API
-    @ResponseBody
     @DeleteMapping("/post/{id}")
     public MessageResponseDto deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         return postService.delete(id, userDetails.getUser());
     }
     //6.게시글 좋아요 추가와 취소
-    @ResponseBody
     @PostMapping("/post/{id}/like")
     public MessageResponseDto likePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return postService.updateLikePost(id, userDetails.getUser());
