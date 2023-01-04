@@ -1,19 +1,27 @@
 package com.sparta.team7_project.enums;
 
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
+import static org.springframework.http.HttpStatus.*;
 
 @Getter
 public enum ErrorCode {
-    TOKEN_FALSE("TOKEN_ERROR", "사용자 권한이 없습니다."),
-    ENTITY_NOT_FOUND("NOT_FOUND", "데이터가 존재하지 않습니다."),
-    INVALID_ERROR("INVALID_ERROR", "에러 발생"),
-    PASSWORD_FALSE("PASSWORD_FALSE", "Password가 일치하지 않습니다.");
 
-    private final String code;
-    private final String message;
+    //400에러
+    DUPLICATED_USER(BAD_REQUEST, "중복된 닉네임이 존재합니다."),
+    TOKEN_FALSE(UNAUTHORIZED, "사용자 권한이 없습니다."),
+    PASSWORD_FALSE(FORBIDDEN, "Password 가 일치하지 않습니다."),
+    NOT_FOUND_POST(NOT_FOUND, "존재하지 않는 게시글 입니다."),
+    NOT_FOUND_TOKEN(NOT_FOUND, "존재하지 않는 댓글 입니다."),
+    NOT_FOUND_USER(NOT_FOUND, "존재하지 않는 사용자 입니다."),
+    DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다.")    ;
 
-    ErrorCode(String code, String message){
-        this.code =code;
-        this.message = message;
+    private final HttpStatus httpStatus;
+    private final String errorMessage;
+
+    ErrorCode(HttpStatus httpStatus, String message){
+        this.httpStatus = httpStatus;
+        this.errorMessage = message;
     }
 }

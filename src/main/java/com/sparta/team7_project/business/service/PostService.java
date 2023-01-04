@@ -11,7 +11,9 @@ import com.sparta.team7_project.Persistence.entity.User;
 import com.sparta.team7_project.enums.UserRoleEnum;
 import com.sparta.team7_project.Persistence.repository.CommentRepository;
 import com.sparta.team7_project.Persistence.repository.PostRepository;
+import com.sparta.team7_project.exception.dto.CustomerException;
 import com.sparta.team7_project.presentation.dto.MessageResponseDto;
+import io.jsonwebtoken.security.SecurityException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.sparta.team7_project.enums.ErrorCode.*;
 
 
 @Service
@@ -40,6 +44,9 @@ public class PostService {
     @Transactional(readOnly = true)
     public List<PostResponseDto> getPosts() {
         List<Post> data = postRepository.findAllByOrderByModifiedDateDesc();
+        if(data.isEmpty()){
+            throw new IllegalArgumentException("작성된 게시글이 없습니다.");
+        }
         //댓글을 포함한 여러개의 게시글을 담아줄 리스트
         //한개만 보내줄거면 필요없음.
         List<PostResponseDto> result = new ArrayList<>();
@@ -98,7 +105,8 @@ public class PostService {
     @Transactional
     public MessageResponseDto update(Long id, PostRequestDto requestDto, User user){
         Post post = postRepository.findById(id).orElseThrow(
-                ()-> new IllegalArgumentException("이미 삭제된 게시글입니다.")
+                ()-> new IllegalArgumentException("게시글이 삭제되었습니다.")
+//                ()-> new CustomerException(NOT_FOUND_POST)
         );
         //앞에는 지금 로그인한 유저가 게시글 작성한 유저와 같은지 검사함
         //뒤에는 지금이 로그인한사람이 유저인지 관리자인지 검사함
@@ -107,10 +115,8 @@ public class PostService {
             post.update(requestDto);
             return new MessageResponseDto("수정 성공", HttpStatus.OK.value());
         }
-        return new MessageResponseDto("수정 실패.", 400);
-
+        throw new SecurityException("작성자만 삭제/수정할 수 있습니다");
     }
-
     //5.선택한 게시글 삭제
     @Transactional
     public MessageResponseDto delete(Long id, User user) {
@@ -125,7 +131,7 @@ public class PostService {
             commentLikeRepository.deleteCommentLikeByPostId(id);
             return new MessageResponseDto("삭제 성공", HttpStatus.OK.value());
         }
-        return new MessageResponseDto("삭제 실패", HttpStatus.FAILED_DEPENDENCY.value());
+        throw new SecurityException("작성자만 삭제/수정할 수 있습니다");
     }
 
     //게시글 좋아요 추가

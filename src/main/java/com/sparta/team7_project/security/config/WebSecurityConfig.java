@@ -23,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -70,6 +71,7 @@ public class WebSecurityConfig {
         // 이 부분에서 login 관련 문제 발생
         // jwt 로그인 방식에서는 세션 로그인 방식을 막아줘야 한다.
 //        http.exceptionHandling().accessDeniedPage("/api/user/forbidden");
+
         return http.build();
     }
 }

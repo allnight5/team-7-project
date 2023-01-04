@@ -9,8 +9,10 @@ import com.sparta.team7_project.business.service.UserService;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import com.sparta.team7_project.security.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -56,6 +58,15 @@ public class UserController {
             return new MessageResponseDto("로그인 되었습니다.", 200);
         }
     }
+    //3.삭제
+    //새로운 Dto가필요할수있음.
+
+
+    @DeleteMapping("/delete")
+    public MessageResponseDto delete(@RequestParam String username, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userService.delete(username, userDetails.getUser());
+    }
+
 
     @GetMapping("/forbidden")
     public ResponseEntity<SecurityExceptionDto> forbidden(){

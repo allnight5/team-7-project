@@ -3,6 +3,7 @@ package com.sparta.team7_project.security.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.team7_project.dto.SecurityExceptionDto;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.security.SecurityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -10,7 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +32,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             //JwtUtil 클래스 메소드인 vaildateToken에서 토큰을 검사한다.
             //토큰에 문제가 있을때 if문을 실행시킨다.
             if(!jwtUtil.validateToken(token)){
+//                throw new SecurityException("토큰이 유효하지 않습니다");
                 jwtExceptionHandler(response, "토큰이 유효하지 않습니다", HttpStatus.UNAUTHORIZED.value());
                 return;
             }
@@ -70,7 +71,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         context.setAuthentication(authentication);
         //누가 인증하였는지에 대한 정보들을 저장한다.
         SecurityContextHolder.setContext(context);
-        //여기까지 하는데 생각보다.. 오래걸리는군여
     }
 
 
@@ -87,5 +87,4 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             log.error(e.getMessage());
         }
     }
-
 }

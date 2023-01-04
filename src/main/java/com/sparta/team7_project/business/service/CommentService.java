@@ -34,6 +34,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final JwtUtil jwtUtil;
 
+    private final CommentLikeService commentLikeService;
     private final CommentLikeRepository commentLikeRepository;
 
 
@@ -62,10 +63,9 @@ public class CommentService {
             MessageResponseDto msg = new MessageResponseDto("업데이트 성공", HttpStatus.OK.value());
             return msg;
         }
-        MessageResponseDto msg = new MessageResponseDto("토큰이 만료되었습니다.", HttpStatus.FAILED_DEPENDENCY.value());
+        MessageResponseDto msg = new MessageResponseDto("수정 실패(권한이 없습니다)", 400);
         return msg;
     }
-
 
     //댓글 삭제
     @Transactional
@@ -79,9 +79,9 @@ public class CommentService {
             commentLikeRepository.deleteCommentLikeByUsernameAndCommentId(user.getUsername(), id);
             return msg;
         }
-        MessageResponseDto msg = new MessageResponseDto("삭제실패", HttpStatus.FAILED_DEPENDENCY.value());
+        MessageResponseDto msg = new MessageResponseDto("삭제 실패(권한이 없습니다)", 400);
         return msg;
-    }
+    } 
 
 
 }

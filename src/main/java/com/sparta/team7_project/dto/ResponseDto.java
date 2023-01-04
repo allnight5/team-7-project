@@ -32,12 +32,4 @@ public class ResponseDto<T> {
 //        this.data = data;
 //        this.error = new Error(errorCode);
 //    }
-    public static class Error{
-        private final String code;
-        private final String message;
-        public Error(ErrorCode errorCode){
-            this.code =errorCode.getCode();
-            this.message = errorCode.getMessage();
-        }
-    }
 }

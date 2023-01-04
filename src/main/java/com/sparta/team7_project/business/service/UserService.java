@@ -1,6 +1,7 @@
 package com.sparta.team7_project.business.service;
 
 
+import com.sparta.team7_project.Persistence.entity.Post;
 import com.sparta.team7_project.presentation.dto.LoginRequestDto;
 import com.sparta.team7_project.presentation.dto.MessageResponseDto;
 import com.sparta.team7_project.presentation.dto.SignupRequestDto;
@@ -8,6 +9,8 @@ import com.sparta.team7_project.Persistence.entity.User;
 import com.sparta.team7_project.enums.UserRoleEnum;
 import com.sparta.team7_project.security.jwt.JwtUtil;
 import com.sparta.team7_project.Persistence.repository.UserRepository;
+import com.sun.jdi.request.DuplicateRequestException;
+import io.jsonwebtoken.security.SecurityException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,7 +38,8 @@ public class UserService {
         // 회원 중복 확인
         Optional<User> found = userRepository.findByUsername(username);
         if (found.isPresent()) {
-            return new MessageResponseDto("중복된 사용자가 존재합니다.", 400);
+            throw new DuplicateRequestException("중복된 사용자가 존재합니다.");
+//            return new MessageResponseDto("중복된 사용자가 존재합니다.", 400);
         }
 
         // 사용자 ROLE 확인
@@ -61,13 +65,26 @@ public class UserService {
         String password = loginRequestDto.getPassword();
         // 사용자 확인
         User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("사용자가 존재하지 않습니다. 회원가입 해주시기 바랍니다.")
+                () -> new IllegalArgumentException("회원을 찾을 수 없습니다.")
         );
         // 비밀번호 확인
         if(!passwordEncoder.matches(password, user.getPassword())){
-            return new MessageResponseDto("비밀번호가 틀렸습니다.", 400);
+            throw new SecurityException("회원을 찾을 수 없습니다.");
         }
 //        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.get().getUsername(), user.get().getRole()));
         return new MessageResponseDto(jwtUtil.createToken(user.getUsername(), user.getRole()));
+    }
+    //3.회원탈퇴
+    @Transactional
+    public MessageResponseDto delete(String username, User user){
+        //앞에는 지금 로그인한 유저가 게시글 작성한 유저와 같은지 검사함
+        //뒤에는 지금이 로그인한사람이 유저인지 관리자인지 검사함
+        if (user.getUsername().equals(username) || user.getRole().equals(UserRoleEnum.ADMIN)) {
+            //DB에서 삭제처리를 해줌
+            userRepository.deleteByUsername(username);
+            return new MessageResponseDto("삭제 성공", HttpStatus.OK.value());
+        }
+        throw new SecurityException("가입한 회원만이 탈퇴할 수 있습니다");
+
     }
 }

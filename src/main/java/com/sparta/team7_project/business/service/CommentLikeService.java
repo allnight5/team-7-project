@@ -40,21 +40,14 @@ public class CommentLikeService {
 
         }else {//유저네임+댓글id 일치하는게 있을경우
             commentLikeRepository.deleteCommentLikeByUsernameAndCommentId(user.getUsername(), commentId);
-
-
             //
-
             Comment comment = commentRepository.findById(commentId).orElseThrow(
                     ()-> new IllegalArgumentException("댓글없음")
             );
             comment.LikeCount(LikeCount(commentId));
-
             return new MessageResponseDto("좋아요 취소", HttpStatus.OK.value());
         }
     }
-
-
-
 
     //좋아요 갯수 새는 부분
     public Long LikeCount(Long commentId){

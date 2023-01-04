@@ -35,8 +35,9 @@ public class Post extends Timestamped{
 
     // @JsonIgnore 필드 레벨에서 무시 될 수 있는 속성
     // 데이터를 주고 받을 때 해당 데이터는 결과창에서 응답값에 보이지 않는다.
+    // jwt의 사용으로 넘김
 //    @JsonIgnore
-//    @Column(nullable = false)
+//    @Column
 //    private String password;
 
     // 댓글을 다 가져오기 위해서

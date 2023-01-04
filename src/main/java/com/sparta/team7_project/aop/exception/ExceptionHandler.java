@@ -11,10 +11,10 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
 
-@Slf4j
-@Aspect
-@Component
-@RequiredArgsConstructor
+//@Slf4j
+//@Aspect
+//@Component
+//@RequiredArgsConstructor
 public class ExceptionHandler {
 
 //    @Around(value = "execution(public * com.sparta.team7_project.presentation.controller.PostController.updatePost(..))")
@@ -26,36 +26,37 @@ public class ExceptionHandler {
 //            return new MessageResponseDto(e.getMessage(), 400);
 //        }
 //    }
-    @Around(value = "execution(public * com.sparta.team7_project.presentation.controller.PostController..*(..))")
-    public Object PostException(ProceedingJoinPoint joinPoint)throws Throwable {
-        try{
-            Object output = joinPoint.proceed();
-            return output;
-        }catch (IllegalArgumentException e) {
-            return new MessageResponseDto(e.getMessage(), 400);
-        }
-    }
-
-    @Around(value = "execution(public * com.sparta.team7_project.presentation.controller.CommentController..*(..))")
-    public Object commentException(ProceedingJoinPoint joinPoint)throws Throwable {
-        try{
-            Object output = joinPoint.proceed();
-            return output;
-        }catch (IllegalArgumentException e) {
-            return new MessageResponseDto(e.getMessage(), 400);
-        }
-    }
-    @Around(value = "execution(public * com.sparta.team7_project.security.service.UserDetailsServiceImpl.loadUserByUsername(..))")
-    public Object securityException(ProceedingJoinPoint joinPoint)throws Throwable {
-        try{
-            Object output = joinPoint.proceed();
-            return output;
-        }catch (RuntimeException e) {
+//    @Around(value = "execution(public * com.sparta.team7_project.presentation.controller.PostController..*(..))")
+//    public Object PostException(ProceedingJoinPoint joinPoint)throws Throwable {
+//        try{
+//            Object output = joinPoint.proceed();
+//            return output;
+//        }catch (IllegalArgumentException e) {
 //            return new MessageResponseDto(e.getMessage(), 400);
-            log.info("사용자를 찾을 수 없습니다");
-        }
-        return false;
-    }
+//        }
+//    }
+//
+//    @Around(value = "execution(public * com.sparta.team7_project.presentation.controller.CommentController..*(..))")
+//    public Object commentException(ProceedingJoinPoint joinPoint)throws Throwable {
+//        try{
+//            Object output = joinPoint.proceed();
+//            return output;
+//        }catch (IllegalArgumentException e) {
+//            return new MessageResponseDto(e.getMessage(), 400);
+//        }
+//    }
+//    @Around(value = "execution(public * com.sparta.team7_project.security.service.UserDetailsServiceImpl.loadUserByUsername(..))")
+//    public Object securityException(ProceedingJoinPoint joinPoint)throws Throwable {
+//        try{
+//            Object output = joinPoint.proceed();
+//            return output;
+//        }catch (RuntimeException e) {
+////            return new MessageResponseDto(e.getMessage(), 400);
+//            //
+//            log.info("사용자를 찾을 수 없습니다");
+//        }
+//        return false;
+//    }
 //    @Pointcut(value = "execution(public * com.sparta.team7_project.presentation.controller.PostController.*.*(..))")
 //    public void TestPoine(){}
 //    @AfterThrowing(pointcut = "TestPoine()", throwing= "exception")
