@@ -59,6 +59,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             ProviderManager - AuthenticationManager의 구현체
             AuthenticationProvider - 인증 수행을 위해 ProviderManager에 의해 사용 됩니다.
             AbstractAuthenticationProcessingFilter - 인증에 사용되는 기본 Filter입니다. 인증의 흐름이 어떻게 이루어 지는지 잘 보여줍니다.
+
             SecurityContextHolder - 누가 인증했는지에 대한 정보들을 저장하고 있습니다.
             SecurityContext - 현재 인증한 user에 대한 정보를 가지고 있습니다
          */

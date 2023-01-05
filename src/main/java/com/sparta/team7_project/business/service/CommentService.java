@@ -15,7 +15,6 @@ import com.sparta.team7_project.Persistence.repository.CommentRepository;
 import com.sparta.team7_project.Persistence.repository.PostRepository;
 import com.sparta.team7_project.Persistence.repository.UserRepository;
 import com.sparta.team7_project.presentation.dto.MessageResponseDto;
-import io.jsonwebtoken.security.SecurityException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,11 @@ public class CommentService {
         현재 사용자가 권한이 있는지도 알아야하니 연관된 두가지 저장소가 필요한다.
     */
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
     private final CommentRepository commentRepository;
+    private final JwtUtil jwtUtil;
+
+    private final CommentLikeService commentLikeService;
     private final CommentLikeRepository commentLikeRepository;
 
 
@@ -53,21 +56,22 @@ public class CommentService {
     @Transactional
     public MessageResponseDto updateComment(CommentRequestDto requestDto, User user, Long id) {
         Comment comment = commentRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 댓글이 삭제되어 존재하지 않습니다.")
+                () -> new IllegalArgumentException("해당 게시글이 삭제되어 존재하지 않습니다.")
         );
         if (user.getRole() == UserRoleEnum.ADMIN || comment.isWriter(user.getUsername())) {
             comment.update(requestDto);
             MessageResponseDto msg = new MessageResponseDto("업데이트 성공", HttpStatus.OK.value());
             return msg;
         }
-        throw new SecurityException("수정 실패(권한이 없습니다)");
+        MessageResponseDto msg = new MessageResponseDto("수정 실패(권한이 없습니다)", 400);
+        return msg;
     }
 
     //댓글 삭제
     @Transactional
     public MessageResponseDto deleteComment(User user, Long id){
         Comment comment = commentRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 댓글이 삭제되어 존재하지 않습니다.")
+                () -> new IllegalArgumentException("해당 게시글이 삭제되어 존재하지 않습니다.")
         );
         if (comment.isWriter(user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)){
             commentRepository.deleteById(comment.getId());
@@ -75,7 +79,8 @@ public class CommentService {
             commentLikeRepository.deleteCommentLikeByUsernameAndCommentId(user.getUsername(), id);
             return msg;
         }
-        throw new SecurityException("수정 실패(권한이 없습니다)");
+        MessageResponseDto msg = new MessageResponseDto("삭제 실패(권한이 없습니다)", 400);
+        return msg;
     } 
 
 
