@@ -29,9 +29,22 @@ public class UserService {
     private static final String ADMIN_TOKEN = "DeXi341@dNDI";
 
     //1.회원가입
+
+
+    //    transaction - 데이터 베이스에서 데이터에 대한 하나의 논리적 실행단계
+//      -> 모두 저장되거나 아무것도 저장되지 않거나를 보장
+//    따라서 @Transactional이 붙은 곳에서 로직 실행 되다가 에러 발생 -> 메소드 요청전으로 롤백해줌  .rollback()
+//    에러 없으면 그대로 데이터베이스에 반영  .commit()
+//
+//    옆에 readOnly를 적지 않으면 readOnly 기본값은 false
+//    readOnly=true를 적으면 읽기전용이 됨
+//      ->영속성 컨텍스트가 엔티티를 관리하지 않도록 하여 스냅샷을 생성하지 않아 메모리를 최적화할 수 있음
+//          *스냅샷 : 영속성 컨텍스트는 엔티티를 저장할 때, 컬렉션으로 또 다른 복사본을 저장하게 되는데 이를 스냅샷이라 함
+//                ->변경 감지가 일어났을 때 1차캐시에 있는 원본 객체가 중간에 변경되었는지 이 스냅샷으로 확인하게 됨
     @Transactional
     public MessageResponseDto signup(SignupRequestDto signupRequestDto) {
         String username = signupRequestDto.getUsername();
+        //패스워드 암호화
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
 //        String email = signupRequestDto.getEmail();
 
@@ -68,6 +81,10 @@ public class UserService {
                 () -> new IllegalArgumentException("회원을 찾을 수 없습니다.")
         );
         // 비밀번호 확인
+
+        //서버 저장 암호화된 비밀번호와 클라이언트가 입력한 패스워드를 암호화한 후 비교
+        //같은 패스워드를 encode해도 salt값 때문에 매번 값이 달라지기에 equals로 구분 불가. 제공되는 matches함수 사용
+
         if(!passwordEncoder.matches(password, user.getPassword())){
             throw new SecurityException("회원을 찾을 수 없습니다.");
         }
