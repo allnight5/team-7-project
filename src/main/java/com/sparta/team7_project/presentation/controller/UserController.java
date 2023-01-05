@@ -31,13 +31,6 @@ public class UserController {
         return msg;
 
     }
-//    @ResponseBody
-//    @PostMapping("/login")
-//    public MsgResponseDto login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
-//        userService.login(loginRequestDto, response);
-//
-//        return new MsgResponseDto("로그인 성공", HttpStatus.OK.value());
-//    }
     //2.로그인
     @PostMapping("/login")
     public MessageResponseDto login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
@@ -58,18 +51,9 @@ public class UserController {
             return new MessageResponseDto("로그인 되었습니다.", 200);
         }
     }
-    //3.삭제
-    //새로운 Dto가필요할수있음.
-
-
+    //3.유저 삭제
     @DeleteMapping("/delete")
     public MessageResponseDto delete(@RequestParam String username, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return userService.delete(username, userDetails.getUser());
-    }
-
-
-    @GetMapping("/forbidden")
-    public ResponseEntity<SecurityExceptionDto> forbidden(){
-        return ResponseEntity.ok(new SecurityExceptionDto(400,"권한이 없습니다."));
     }
 }
