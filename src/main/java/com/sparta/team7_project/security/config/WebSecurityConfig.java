@@ -34,7 +34,7 @@ public class WebSecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         // h2-console 사용 및 resources 접근 허용 설정
         return (web) -> web.ignoring()
-                .antMatchers(String.valueOf(PathRequest.toH2Console()))
+                .requestMatchers(PathRequest.toH2Console())
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
     @Bean
@@ -59,19 +59,15 @@ public class WebSecurityConfig {
                 // http에서 해본게 아니라서 이걸 회원가입만 열어야할지 로그인만 열어야할지
                 // http에서 해본사람만 알것이다.
                 .antMatchers("/api/user/**").permitAll()
-//                .antMatchers("/h2-console").permitAll()
+                .antMatchers("/h2-console").permitAll()
                 .antMatchers("/api/post/get","/api/post/get/**").permitAll()
 //                .requestMatchers("/api/post/get/**/comment").permitAll()
-                //ADMIN Authorization(ADMIN권한, ROLE_ADMIN)-3가지 방법
-                //.antMatchers("/admin/**").hasRole("ROLE_ADMIN")
-                //.antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
-                .antMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
                 .anyRequest().authenticated()//인증이 되어야 한다는 이야기이다.
                 //.anonymous() : 인증되지 않은 사용자도 접근할 수 있다.
                 // JWT 인증/인가를 사용하기 위한 설정
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-//
-////        http.formLogin().loginPage("/api/user/login-page").permitAll();
+
+//        http.formLogin().loginPage("/api/user/login-page").permitAll();
         // 이 부분에서 login 관련 문제 발생
         // jwt 로그인 방식에서는 세션 로그인 방식을 막아줘야 한다.
 //        http.exceptionHandling().accessDeniedPage("/api/user/forbidden");

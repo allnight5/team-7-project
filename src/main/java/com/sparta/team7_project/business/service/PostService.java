@@ -77,7 +77,7 @@ public class PostService {
     }
 
     //3.선택한 게시글 조회
-    @Transactional(readOnly = true)
+    @Transactional
     public PostResponseDto getPost(Long id) {
 
         Post post = postRepository.findById(id).orElseThrow(
