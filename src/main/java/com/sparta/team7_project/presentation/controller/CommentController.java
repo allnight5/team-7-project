@@ -21,19 +21,16 @@ public class CommentController {
     private final CommentLikeService commentLikeService;
 
     //1. 댓글 생성 API
-    @ResponseBody
     @PostMapping("/{id}/comment")
     public CommentResponseDto createComment(@RequestBody CommentRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
         return commentService.createComment(requestDto, userDetails.getUser(), id);
     }
     //2.댓글 수정 API
-    @ResponseBody
     @PutMapping("/{id}/comment")
     public MessageResponseDto updateComment(@RequestBody CommentRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
         return commentService.updateComment(requestDto, userDetails.getUser(), id);
     }
     //3. 댓글 삭제 API
-    @ResponseBody
     @DeleteMapping("/{id}/comment")
     public MessageResponseDto deleteComment(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
         return commentService.deleteComment(userDetails.getUser(), id);
