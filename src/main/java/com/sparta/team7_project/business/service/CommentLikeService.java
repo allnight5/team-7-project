@@ -12,9 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sparta.team7_project.Persistence.entity.User;
 
 import java.util.List;
-
-
-
 @Service
 @RequiredArgsConstructor
 public class CommentLikeService {
@@ -28,26 +25,20 @@ public class CommentLikeService {
             commentLikeRepository.save(commentLike);
 
             //... 위랑 아래는 별개의 기능..
-
-            Comment comment = commentRepository.findById(commentId).orElseThrow(
-                    ()-> new IllegalArgumentException("댓글없음")
-            );
+            Comment comment = getComment(commentId);
             //코멘트 객체를 사용하기 위해서 왜 코멘트 객체를 사용해야 하냐면 코멘트 엔티티에 좋아요갯수샌거를 추가해주기 위해서
-
             comment.LikeCount(LikeCount(commentId));
-
             return new MessageResponseDto("좋아요 하나 증가", HttpStatus.OK.value());
 
         }else {//유저네임+댓글id 일치하는게 있을경우
             commentLikeRepository.deleteCommentLikeByUsernameAndCommentId(user.getUsername(), commentId);
             //
-            Comment comment = commentRepository.findById(commentId).orElseThrow(
-                    ()-> new IllegalArgumentException("댓글없음")
-            );
+            Comment comment = getComment(commentId);
             comment.LikeCount(LikeCount(commentId));
             return new MessageResponseDto("좋아요 취소", HttpStatus.OK.value());
         }
     }
+
 
     //2. 좋아요 갯수 새는 부분
     public Long LikeCount(Long commentId){
@@ -56,4 +47,11 @@ public class CommentLikeService {
         return (long) countLikeList.size();
     } //이제 이건 숫자를 반환하는겨 ... 근데 이숫자가 댓글안으로 들어가야함... ...흠..
 
+    //comment 객체 불러내는거 분리
+    private Comment getComment(Long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                ()-> new IllegalArgumentException("댓글없음")
+        );
+        return comment;
+    }
 }

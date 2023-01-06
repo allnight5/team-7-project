@@ -58,12 +58,11 @@ public class Post extends Timestamped{
     @JoinColumn(name = "USER_ID")
     private User users;
 
-
     //양방향에 데이터를 저장해주기 위해서 사용한 메소드
     //그런데 오류나서 죽여뒀다.
     public void addUser(User user){
         this.users =user;
-        users.getPosts().add(this);
+//        users.getPosts().add(this);
     }
     public Post(PostRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();

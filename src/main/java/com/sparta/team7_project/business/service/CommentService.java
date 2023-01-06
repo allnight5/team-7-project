@@ -33,8 +33,6 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
 
-
-
     //1.댓글 생성
     @Transactional
     public CommentResponseDto createComment(CommentRequestDto requestDto, User user, Long id) {
@@ -47,13 +45,14 @@ public class CommentService {
         return new CommentResponseDto(comment);
     }
 
+    //중복코드를 메소드분리 시키고 싶다면 중복코드부분만 드래그해서
+    //1. 마우스 우측클릭 -> Refactor -> Extarct Mathod
+    //2. 단축키로는 windows기준 ctrl+alt+M 누르면됩니다.
 
     //2.댓글 수정
     @Transactional
     public MessageResponseDto updateComment(CommentRequestDto requestDto, User user, Long id) {
-        Comment comment = commentRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 게시글이 삭제되어 존재하지 않습니다.")
-        );
+        Comment comment = getComment(id);
         if (user.getRole() == UserRoleEnum.ADMIN || comment.isWriter(user.getUsername())) {
             comment.update(requestDto);
             MessageResponseDto msg = new MessageResponseDto("업데이트 성공", HttpStatus.OK.value());
@@ -66,9 +65,7 @@ public class CommentService {
     //3.댓글 삭제
     @Transactional
     public MessageResponseDto deleteComment(User user, Long id){
-        Comment comment = commentRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 게시글이 삭제되어 존재하지 않습니다.")
-        );
+        Comment comment = getComment(id);
         if (comment.isWriter(user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)){
             commentRepository.deleteById(comment.getId());
             MessageResponseDto msg = new MessageResponseDto("삭제 성공", HttpStatus.OK.value());
@@ -77,7 +74,13 @@ public class CommentService {
         }
         MessageResponseDto msg = new MessageResponseDto("삭제 실패(권한이 없습니다)", 400);
         return msg;
-    } 
+    }
 
-
+    //조회분리
+    private Comment getComment(Long id) {
+        Comment comment = commentRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("해당 게시글이 삭제되어 존재하지 않습니다.")
+        );
+        return comment;
+    }
 }

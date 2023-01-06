@@ -1,6 +1,7 @@
 package com.sparta.team7_project.business.service;
 
 import com.sparta.team7_project.Persistence.repository.CommentLikeRepository;
+import com.sparta.team7_project.Persistence.repository.UserRepository;
 import com.sparta.team7_project.business.dto.CommentResponseDto;
 import com.sparta.team7_project.business.dto.PostRequestDto;
 import com.sparta.team7_project.business.dto.PostResponseDto;
@@ -37,7 +38,10 @@ public class PostService {
     //1.게시글 생성
     @Transactional // 영속성 컨텍스트가 생김. 처음 트랜잭선 AOP가 시작되면 생성되고, 모든 처리를 다하고 commit이 완료되면 APO가 종료되고 영속성 컨텍스트도 사라짐. 트랜잭션을 원자적으로, 독립적으로 처리하기에 각각 개별적인 처리 가능.
     public PostResponseDto createPost(PostRequestDto requestDto, User user) {
+//        User users = userRepository.findByUsername(user.getUsername()).orElseThrow(
+//                ()->new IllegalArgumentException("사용자를 찾을수없어"));
         Post post = new Post(requestDto, user.getUsername(), user);
+//        users.addPost(post);
         postRepository.save(post);
         return new PostResponseDto(post);
     }
@@ -68,17 +72,63 @@ public class PostService {
     @Transactional
     public PostResponseDto getPost(Long id) {
 
-        Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("게시글이 삭제되었습니다.")
-        );
         //이게 JPA로 양방향 연결이 post로 되어있어서
         //이 포스트와 연결된 댓글(comment)만 comments라는 리스트 멤버변수에 넣어줌
         //게시글을 되돌려서 보내줌
-        return getPostResponseDto(post);
+        return getPostResponseDto(getPost1(id, "게시글이 삭제되었습니다."));
     }
 
-    @NotNull
+
+    //4.선택한 게시글 수정
     @Transactional
+    public MessageResponseDto update(Long id, PostRequestDto requestDto, User user){
+        Post post = getPost1(id, "게시글이 삭제되었습니다.");
+        //앞에는 지금 로그인한 유저가 게시글 작성한 유저와 같은지 검사함
+        //뒤에는 지금이 로그인한사람이 유저인지 관리자인지 검사함
+        if(user.getUsername().equals(post.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
+            //포스트를 받은 데이터로 업데이트해줌
+            post.update(requestDto);
+            return new MessageResponseDto("수정 성공", HttpStatus.OK.value());
+        }
+        throw new SecurityException("작성자만 삭제/수정할 수 있습니다");
+    }
+    //5.선택한 게시글 삭제
+    @Transactional
+    public MessageResponseDto delete(Long id, User user) {
+        Post post = getPost1(id, "이미 삭제된 게시글입니다.");
+        //앞에는 지금 로그인한 유저가 게시글 작성한 유저와 같은지 검사함
+        //뒤에는 지금이 로그인한사람이 유저인지 관리자인지 검사함
+        if (user.getUsername().equals(post.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
+            //DB에서 삭제처리를 해줌
+            postRepository.delete(post);
+            commentLikeRepository.deleteCommentLikeByPostId(id);
+            return new MessageResponseDto("삭제 성공", HttpStatus.OK.value());
+        }
+        throw new SecurityException("작성자만 삭제/수정할 수 있습니다");
+    }
+
+    //6.게시글 좋아요 추가
+    @Transactional
+    public MessageResponseDto updateLikePost(Long id, User user){
+        Post post = getPost1(id, "존재하지 않는 게시글입니다.");
+        if(!postLikeService.hasLikePost(post, user)) {
+            post.increaseLikeCount();
+            return postLikeService.createLikePost(post, user);
+        }
+        post.decreaseLikeCount();
+        return postLikeService.removeLikePost(post, user);
+    }
+
+    //1번. 4번. 5번. 6번 중복된 조회내용 메소드 생성
+    private Post getPost1(Long id, String s) {
+        Post post = postRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException(s)
+        );
+        return post;
+    }
+
+    //2-1, 3-2. 공통내용 클래스
+    @NotNull
     private PostResponseDto getPostResponseDto(Post post) {
         List<Comment> comments = commentRepository.findAllByPosts(post);
         //읽어 들인 post를 Dto형태로 형변환 해줌
@@ -95,50 +145,4 @@ public class PostService {
         postResponseDto.addCommentList(commentResponseDto);
         return postResponseDto;
     }
-
-    //4.선택한 게시글 수정
-    @Transactional
-    public MessageResponseDto update(Long id, PostRequestDto requestDto, User user){
-        Post post = postRepository.findById(id).orElseThrow(
-                ()-> new IllegalArgumentException("게시글이 삭제되었습니다.")
-//                ()-> new CustomerException(NOT_FOUND_POST)
-        );
-        //앞에는 지금 로그인한 유저가 게시글 작성한 유저와 같은지 검사함
-        //뒤에는 지금이 로그인한사람이 유저인지 관리자인지 검사함
-        if(user.getUsername().equals(post.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
-            //포스트를 받은 데이터로 업데이트해줌
-            post.update(requestDto);
-            return new MessageResponseDto("수정 성공", HttpStatus.OK.value());
-        }
-        throw new SecurityException("작성자만 삭제/수정할 수 있습니다");
-    }
-    //5.선택한 게시글 삭제
-    @Transactional
-    public MessageResponseDto delete(Long id, User user) {
-        Post post = postRepository.findById(id).orElseThrow(
-                ()-> new IllegalArgumentException("이미 삭제된 게시글입니다.")
-        );
-        //앞에는 지금 로그인한 유저가 게시글 작성한 유저와 같은지 검사함
-        //뒤에는 지금이 로그인한사람이 유저인지 관리자인지 검사함
-        if (user.getUsername().equals(post.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)) {
-            //DB에서 삭제처리를 해줌
-            postRepository.delete(post);
-            commentLikeRepository.deleteCommentLikeByPostId(id);
-            return new MessageResponseDto("삭제 성공", HttpStatus.OK.value());
-        }
-        throw new SecurityException("작성자만 삭제/수정할 수 있습니다");
-    }
-
-    //6.게시글 좋아요 추가
-    @Transactional
-    public MessageResponseDto updateLikePost(Long id, User user){
-        Post post = postRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("존재하지 않는 게시글입니다."));
-        if(!postLikeService.hasLikePost(post, user)) {
-            post.increaseLikeCount();
-            return postLikeService.createLikePost(post, user);
-        }
-        post.decreaseLikeCount();
-        return postLikeService.removeLikePost(post, user);
-    }
-
 }
