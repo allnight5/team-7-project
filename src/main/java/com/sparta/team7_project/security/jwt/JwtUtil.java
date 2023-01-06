@@ -1,6 +1,8 @@
 package com.sparta.team7_project.security.jwt;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.team7_project.security.dto.SecurityExceptionDto;
 import com.sparta.team7_project.enums.UserRoleEnum;
 import com.sparta.team7_project.security.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
@@ -9,6 +11,7 @@ import io.jsonwebtoken.security.SecurityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +20,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -25,7 +29,6 @@ import java.util.Date;
 @Component
 @RequiredArgsConstructor
 public class JwtUtil {
-
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String AUTHORIZATION_KEY = "auth";
     private static final String BEARER_PREFIX = "Bearer ";
@@ -83,7 +86,7 @@ public class JwtUtil {
 
     // 토큰 검증
     // Header에서 토큰 가져오기
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token,HttpServletResponse response) {
         //parser : parsing을 하는 도구. parsing : token에 내재된 자료 구조를 빌드하고 문법을 검사한다.
         // JwtParseBuilder인스턴스를 생성
         // 서명 검증을 위한 키를 지정 setSigningKey()
@@ -93,15 +96,20 @@ public class JwtUtil {
             return true;
         } catch (SecurityException | MalformedJwtException e) {// 전: 권한 없다면 발생 , 후: JWT가 올바르게 구성되지 않았다면 발생
             log.info("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
+
         } catch (ExpiredJwtException e) {// JWT만료
             log.info("Expired JWT token, 만료된 JWT token 입니다.");
+
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
+
         } catch (IllegalArgumentException e) {
-            log.info("JWT claims is empty, 잘못된 JWT 토큰 입니다."); 
+            log.info("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+
         }
         return false;
     }
+
     // 인증 객체 생성
     public Authentication createAuthentication(String username) {
         //
@@ -148,5 +156,4 @@ public class JwtUtil {
     public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
-
 }

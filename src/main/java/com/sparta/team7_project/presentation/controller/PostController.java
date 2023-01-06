@@ -2,7 +2,6 @@ package com.sparta.team7_project.presentation.controller;
 
 import com.sparta.team7_project.business.dto.PostRequestDto;
 import com.sparta.team7_project.business.dto.PostResponseDto;
-import com.sparta.team7_project.dto.*;
 import com.sparta.team7_project.security.jwt.JwtUtil;
 import com.sparta.team7_project.presentation.dto.MessageResponseDto;
 import com.sparta.team7_project.security.service.UserDetailsImpl;
@@ -39,7 +38,6 @@ public class PostController {
             인증 한 경우에는 username과 authorities 참조 가능
          */
         return postService.createPost(requestDto, userDetails.getUser());
-//        return postService.createPost(requestDto, userDetails.getUser());
     }
 
     /* @GetMapping과 @PostMapping 어노테이션은 @PutMapping, @DeleteMapping, @PatchMapping과 함께 스프링 4.3부터 등장했다. 왜 @RequestMapping 대신 @PostMapping 등등을 쓸까 ?

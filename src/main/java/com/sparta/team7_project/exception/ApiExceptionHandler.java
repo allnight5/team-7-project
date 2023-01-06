@@ -4,14 +4,17 @@ package com.sparta.team7_project.exception;
 import com.sparta.team7_project.exception.dto.ApiExceptionResponseDto;
 import com.sun.jdi.request.DuplicateRequestException;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @Slf4j
 /*
@@ -52,14 +55,13 @@ sout ->TEST코드 -> 로깅... 배표환경에서 확인....
 그러면 ControllerAdvice가 먼지 알아보자면... 간단히 설명하자면 @controller 붙은 클래스에서 발생한 예외를 잡아서 처리하겠다 이거임
 그러면 Rest는 ResponstBody가 결합된거 확인가능 ! 응답객체를 리턴해줄려면 이걸 사용 단순 예외처리면 ControllerAdvice만 사용함*/
 public class ApiExceptionHandler{
-//    @ExceptionHandler(value = { IllegalArgumentException.class })
-//    @ExceptionHandler({IllegalArgumentException.class, TokenMgrError.class})
-//        log.warn(exception.getMessage());
-//        return new ResponseEntity<>(
-//    restApiException,
-//    HttpStatus.BAD_REQUEST
-//        );
-//    찾는 내용이 없을때 하는 예외처리
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ApiExceptionResponseDto handleValidationException(MethodArgumentNotValidException exception){
+        log.warn(exception.getMessage());
+        return new ApiExceptionResponseDto(exception.getFieldError().getDefaultMessage(), 400);
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     //상태코드를 400으로 집어넣어줌 .. https://velog.io/@davidko/API-Exception-%EC%B2%98%EB%A6%ACSpring 참고
     @ExceptionHandler(IllegalArgumentException.class)
@@ -88,29 +90,24 @@ public class ApiExceptionHandler{
     @ExceptionHandler(MalformedJwtException.class)
     public ApiExceptionResponseDto handleSecurityRequestException(SecurityException exception) {
         log.warn(exception.getMessage());
-        return new  ApiExceptionResponseDto(exception.getMessage(), 400);
+        return new ApiExceptionResponseDto(exception.getMessage(), 400);
     }
+
+
+//    @ExceptionHandler(value = { IllegalArgumentException.class })
+//    @ExceptionHandler({IllegalArgumentException.class, TokenMgrError.class})
+//        log.warn(exception.getMessage());
+//        return new ResponseEntity<>(
+//    restApiException,
+//    HttpStatus.BAD_REQUEST
+//        );
+//    찾는 내용이 없을때 하는 예외처리
 
     //회원가입시 vaild 규칙이 틀렸을때 이루어지는 예외처리
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ApiExceptionResponseDto handleValidationException(MethodArgumentNotValidException exception){
-        log.warn(exception.getMessage());
-        return new ApiExceptionResponseDto(exception.getFieldError().getDefaultMessage(), 400);
-    }
-
-
     //Controller단 이외에서 발생하는 예외처리는 advice로 처리되지 않는다.
     //다른말로 Controller단으로 오기전에or Controller단에서 시작하기전에 보내오는 메소드내에서 오류가나서
-    //예외를 발생시킬시 Advice는 잡아낼수없다.
-    //사용자가 존재하지 않을때 하는 예외 처리
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public ApiExceptionResponseDto handleUsernameNotFoundException(UsernameNotFoundException exception){
-        log.warn(exception.getMessage());
-        return new  ApiExceptionResponseDto(exception.getMessage(),400);
-    }
-
+    //예외를 발생시켰을때 그부분에서 처리하고 끝나기 때문에 ControllerAdvice로는 잡아낼수없다.
+//ApiExceptionHandler
     // protected 쓴 이유는 상속을받는 녀석 말고는 사용하지 않기 위해서
     //제 3의 방식 커스텀을 해서 예외발생을 커스텀으로 만들어줘서 처리한다.
     //커스텀할필요없이.. new IllegalArgumentException 으로 다 통일하는거랑 커스텀해서하는거랑 차이는없는데

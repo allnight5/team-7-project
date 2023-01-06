@@ -20,8 +20,8 @@ import java.util.List;
 public class CommentLikeService {
     private final CommentLikeRepository commentLikeRepository;
     private final CommentRepository commentRepository;
-
-    @Transactional//좋아요 판별하는 부분
+    //1.좋아요 판별하는 부분
+    @Transactional
     public MessageResponseDto updateAndCountCommentLike(User user, Long commentId, Long id){
         if(commentLikeRepository.findAllByCommentIdAndUsername(commentId ,user.getUsername()).isEmpty()){
             CommentLike commentLike = new CommentLike(user,commentId, id);
@@ -49,7 +49,7 @@ public class CommentLikeService {
         }
     }
 
-    //좋아요 갯수 새는 부분
+    //2. 좋아요 갯수 새는 부분
     public Long LikeCount(Long commentId){
 
       List<CommentLike> countLikeList =  commentLikeRepository.findAllByCommentId(commentId);

@@ -1,8 +1,8 @@
 package com.sparta.team7_project.presentation.controller;
 
+import com.sparta.team7_project.presentation.dto.DeleteRequestDto;
 import com.sparta.team7_project.presentation.dto.LoginRequestDto;
 import com.sparta.team7_project.presentation.dto.MessageResponseDto;
-import com.sparta.team7_project.dto.SecurityExceptionDto;
 import com.sparta.team7_project.presentation.dto.SignupRequestDto;
 import com.sparta.team7_project.security.jwt.JwtUtil;
 import com.sparta.team7_project.business.service.UserService;
@@ -11,7 +11,6 @@ import javax.validation.Valid;
 
 import com.sparta.team7_project.security.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +38,7 @@ public class UserController {
     //의존성 주입
     private final UserService userService;
 
-    //1.회원가입
+    //1.회웝가입
 
     //POST 메소드는 주로 새로운 리소스를 생성(create)할 때 사용. 서버에 데이터 추가 or 작성시
     @PostMapping("/signup")
@@ -63,8 +62,6 @@ public class UserController {
 //    }
     //2.로그인
     @PostMapping("/login")
-
-
     public MessageResponseDto login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
         //이름과 유저인지 관리자인지 구분한 토큰을 가져오는 부분
         MessageResponseDto msg = userService.login(loginRequestDto);
@@ -72,32 +69,13 @@ public class UserController {
         String token = msg.getMessage();
         //헤더를 통해 토큰을 발급해 주는 부분
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
-        //400은 실패기 때문에 실패한 이유 메시지와 상태코드를 가져온다.
-        if(msg.getStatusCode() == 400){
-            //MesaagerResponseDto형태로 보내주기
-            return new MessageResponseDto(msg.getMessage(), msg.getStatusCode());
-        }
-        //로그인 성공했으니 로그인을 성공했다는 메시지와 상태 200코드를 보내준다.
-        else {
-            return new MessageResponseDto("로그인 되었습니다.", 200);
-        }
+        return new MessageResponseDto("로그인 되었습니다.", 200);
     }
-    //3.삭제
-    //새로운 Dto가필요할수있음.
-
-
+    //3.유저 삭제
     @DeleteMapping("/delete")
     //@AuthenticationPrincipal -> 세션 정보 UserDetails에 접근할 수 있는 어노테이션
     //현재 로그인한 사용자 객체를 가져오기 위해 필요
-    public MessageResponseDto delete(@RequestParam String username, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return userService.delete(username, userDetails.getUser());
-    }
-
-
-    @GetMapping("/forbidden")
-    //ResponseEntity는 HttpEntity를 상속받음으로써 HttpHeader와 body를 가지고 있음
-    // ->데이터와 Http 상태 코드를 직접 제어할 수 있는 클래스
-    public ResponseEntity<SecurityExceptionDto> forbidden(){
-        return ResponseEntity.ok(new SecurityExceptionDto(400,"권한이 없습니다."));
+    public MessageResponseDto delete(@RequestBody DeleteRequestDto deleteRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userService.delete(deleteRequestDto, userDetails.getUser());
     }
 }

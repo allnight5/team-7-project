@@ -15,6 +15,7 @@ import com.sparta.team7_project.exception.dto.CustomerException;
 import com.sparta.team7_project.presentation.dto.MessageResponseDto;
 import io.jsonwebtoken.security.SecurityException;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +32,6 @@ public class PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final PostLikeService postLikeService;
-
     private final CommentLikeRepository commentLikeRepository;
 
     //1.게시글 생성
@@ -41,6 +41,7 @@ public class PostService {
         postRepository.save(post);
         return new PostResponseDto(post);
     }
+    //2.게시글 전체조회
     @Transactional(readOnly = true)
     public List<PostResponseDto> getPosts() {
         List<Post> data = postRepository.findAllByOrderByModifiedDateDesc();
@@ -54,23 +55,10 @@ public class PostService {
         for (Post post : data){
             //이게 JPA로 양방향 연결이 post로 되어있어서
             //이 포스트와 연결된 댓글(comment)만 comments라는 리스트 멤버변수에 넣어줌
-            List<Comment> comments = commentRepository.findAllByPosts(post);
-            //읽어 들인 post를 Dto형태로 형변환 해줌
-            PostResponseDto postResponseDto = new PostResponseDto(post);
-            //이제 이하나의 포스트에 연관된 댓글을 담아줄 List를 만들어줌
-            List<CommentResponseDto> commentResponseDto = new ArrayList<>();
-            //리스트를 만들었다면 이제 그 리스트에 연관된 댓글을 담아야 하니
-            //연관된 숫자만큼 반복문을 돌려줌
-            for(Comment comment : comments){
-                //만든 리스트 변수에 댓글들을 Dto형태로 위에 만든 리스트 변수에 넣어줌
-                commentResponseDto.add(new CommentResponseDto(comment));
-            }
-            //이제 Dto리스트에 연관된 댓글을 담은 댓글리스트를 넣어줌
-            postResponseDto.addCommentList(commentResponseDto);
             //이 포스트와 연관된 댓글을 넣은 게시글에 댓글이달린
             // Dto완성채를 게시글 전체를 담은 리스트에 넣어주고
             //다음 게시글에 연관된 댓글을 넣어주러 반복문 확인을하러감
-            result.add(postResponseDto);
+            result.add(getPostResponseDto(post));
         }
         //리스트를 되돌려서 보내줌
         return result;
@@ -85,6 +73,13 @@ public class PostService {
         );
         //이게 JPA로 양방향 연결이 post로 되어있어서
         //이 포스트와 연결된 댓글(comment)만 comments라는 리스트 멤버변수에 넣어줌
+        //게시글을 되돌려서 보내줌
+        return getPostResponseDto(post);
+    }
+
+    @NotNull
+    @Transactional
+    private PostResponseDto getPostResponseDto(Post post) {
         List<Comment> comments = commentRepository.findAllByPosts(post);
         //읽어 들인 post를 Dto형태로 형변환 해줌
         PostResponseDto postResponseDto = new PostResponseDto(post);
@@ -98,9 +93,9 @@ public class PostService {
         }
         //이제 Dto리스트에 연관된 댓글을 담은 댓글리스트를 넣어줌
         postResponseDto.addCommentList(commentResponseDto);
-        //게시글을 되돌려서 보내줌
         return postResponseDto;
     }
+
     //4.선택한 게시글 수정
     @Transactional
     public MessageResponseDto update(Long id, PostRequestDto requestDto, User user){
@@ -134,7 +129,7 @@ public class PostService {
         throw new SecurityException("작성자만 삭제/수정할 수 있습니다");
     }
 
-    //게시글 좋아요 추가
+    //6.게시글 좋아요 추가
     @Transactional
     public MessageResponseDto updateLikePost(Long id, User user){
         Post post = postRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("존재하지 않는 게시글입니다."));

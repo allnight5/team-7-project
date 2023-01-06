@@ -15,14 +15,14 @@ public class PostLikeService {
 
     private final PostLikeRepository postLikeRepository;
 
-    //게시글 좋아요 증가
+    //1.게시글 좋아요 증가
     public MessageResponseDto createLikePost(Post post, User user){
         PostLike postlike = new PostLike(post, user);
         postLikeRepository.save(postlike);
         return new MessageResponseDto("게시글 좋아요 성공", HttpStatus.OK.value());
     }
 
-    //게시글 좋아요 삭제
+    //2.게시글 좋아요 삭제
     public MessageResponseDto removeLikePost(Post post, User user){
         PostLike postLike = postLikeRepository.findByPostIdAndUsername(post, user).orElseThrow(() -> {
             throw new IllegalArgumentException("게시글이 없습니다..");
@@ -30,7 +30,7 @@ public class PostLikeService {
         postLikeRepository.delete(postLike);
         return new MessageResponseDto("게시글 좋아요 취소 성공", HttpStatus.OK.value());
     }
-    //게시글에 유저가 작성한 좋아요가 있는지 확인
+    //3.게시글에 유저가 작성한 좋아요가 있는지 확인
     public boolean hasLikePost(Post post, User user){
         return postLikeRepository.findByPostIdAndUsername(post, user).isPresent();
     }

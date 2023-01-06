@@ -16,8 +16,6 @@ public class PostLike {
 
 //    @Column
 //    private Long Like_count;
-
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="USER_ID", nullable = false)
     private User username;

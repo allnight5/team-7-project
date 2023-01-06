@@ -56,7 +56,7 @@ public class WebSecurityConfig {
                 // 회원가입해야 로그인을 할수있는데 회원가입하려면 로그인하라는게 말이되겠는가?
                 // 그리고.. 로그인도 로그인란으로 이동하게 해줘야하는데..
                 // 잘못하면 두번인증한다. 로그인창으로 바로 이동하게 해주자.
-                // http에서 해본게 아니라서 이걸 회원가입만 열어야할지 로그인만 열어야할지
+                // http에서 해본게 아니라서 이걸 회원가입만 열어야할지 로그인만 열어야할지 둘다열어야하는지
                 // http에서 해본사람만 알것이다.
                 .antMatchers("/api/user/**").permitAll()
                 .antMatchers("/h2-console").permitAll()
@@ -66,6 +66,7 @@ public class WebSecurityConfig {
                 //.anonymous() : 인증되지 않은 사용자도 접근할 수 있다.
                 // JWT 인증/인가를 사용하기 위한 설정
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+//                .formLogin().failureHandler();
 
 //        http.formLogin().loginPage("/api/user/login-page").permitAll();
         // 이 부분에서 login 관련 문제 발생

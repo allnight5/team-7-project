@@ -1,10 +1,9 @@
 package com.sparta.team7_project.security.jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.team7_project.dto.SecurityExceptionDto;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.security.SecurityException;
 import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.team7_project.security.dto.SecurityExceptionDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -20,20 +19,17 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
-
     private final JwtUtil jwtUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
         String token = jwtUtil.resolveToken(request);
-
         if(token != null) {
             //JwtUtil 클래스 메소드인 vaildateToken에서 토큰을 검사한다.
             //토큰에 문제가 있을때 if문을 실행시킨다.
-            if(!jwtUtil.validateToken(token)){
+            if(!jwtUtil.validateToken(token, response)){
 //                throw new SecurityException("토큰이 유효하지 않습니다");
-                jwtExceptionHandler(response, "토큰이 유효하지 않습니다", HttpStatus.UNAUTHORIZED.value());
+                jwtExceptionHandler(response, "Invalid JWT signature", HttpStatus.BAD_REQUEST.value());
                 return;
             }
             // 정보의 한 덩어리를 클레임(claim)이라고 부르며, 클레임은 key-value의 한 쌍으로 이루어져있습니다
@@ -52,6 +48,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     // https://00hongjun.github.io/spring-security/securitycontextholder/
     //
     public void setAuthentication(String username) {
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        //jwtUtil에서  username에 알맞은 User객체를 가져와서 Authentication에 넣어준다.
+        Authentication authentication = jwtUtil.createAuthentication(username);
+        //그리고 빈 컨텍스트에 가져온 데이터(User객체와, username) authentication변수를 넣어주고
+        context.setAuthentication(authentication);
+        //누가 인증하였는지에 대한 정보들을 저장한다.
+        SecurityContextHolder.setContext(context);
+    }
+
         /* 스프링 시큐리티의 Authentication
             Authentication - SecurityContext의 user, 인증 정보를 가지고 있으며, AuthenticationManager에 의해 제공됩니다.
             GrantedAuthority - 인증 주체에게 부여된 권한 (roles, scopes, etc.)
@@ -63,16 +68,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             SecurityContextHolder - 누가 인증했는지에 대한 정보들을 저장하고 있습니다.
             SecurityContext - 현재 인증한 user에 대한 정보를 가지고 있습니다
          */
-        //SecurityContextHolder.createEmptyContext() 구성된 전략에 대해 빈 컨텍스트를 새로 생성하도록 위임합니다.
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        //jwtUtil에서  username에 알맞은 User객체를 가져와서 Authentication에 넣어준다.
-        Authentication authentication = jwtUtil.createAuthentication(username);
-        //그리고 빈 컨텍스트에 가져온 데이터(User객체와, username) authentication변수를 넣어주고
-        context.setAuthentication(authentication);
-        //누가 인증하였는지에 대한 정보들을 저장한다.
-        SecurityContextHolder.setContext(context);
-    }
-
+    //SecurityContextHolder.createEmptyContext() 구성된 전략에 대해 빈 컨텍스트를 새로 생성하도록 위임합니다.
 
     //예외가 발생했을때 사용되는 메소드
     //맨위에 doFilterInternal 메소드에서 토큰이 틀렸을때

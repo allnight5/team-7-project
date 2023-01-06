@@ -30,16 +30,12 @@ public class CommentService {
         현재 사용자가 권한이 있는지도 알아야하니 연관된 두가지 저장소가 필요한다.
     */
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
     private final CommentRepository commentRepository;
-    private final JwtUtil jwtUtil;
-
-    private final CommentLikeService commentLikeService;
     private final CommentLikeRepository commentLikeRepository;
 
 
 
-    //댓글 생성
+    //1.댓글 생성
     @Transactional
     public CommentResponseDto createComment(CommentRequestDto requestDto, User user, Long id) {
         Post post = postRepository.findById(id).orElseThrow(
@@ -52,7 +48,7 @@ public class CommentService {
     }
 
 
-    //댓글 수정
+    //2.댓글 수정
     @Transactional
     public MessageResponseDto updateComment(CommentRequestDto requestDto, User user, Long id) {
         Comment comment = commentRepository.findById(id).orElseThrow(
@@ -67,7 +63,7 @@ public class CommentService {
         return msg;
     }
 
-    //댓글 삭제
+    //3.댓글 삭제
     @Transactional
     public MessageResponseDto deleteComment(User user, Long id){
         Comment comment = commentRepository.findById(id).orElseThrow(
